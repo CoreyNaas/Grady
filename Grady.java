@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 public class Grady extends Application {
 	//declare globton of textfields lol
 	ArrayList<TextField> tfClass = new ArrayList<TextField>();
-	ArrayList<TextField> tfCreditHours = new ArrayList<TextField>();
+	ArrayList<TextField> tfCreditHour = new ArrayList<TextField>();
 	ArrayList<TextField> tfCurrentGrade = new ArrayList<TextField>();
 	ArrayList<TextField> tfTargetGrade = new ArrayList<TextField>();
 	ArrayList<TextField> tfRemainingGrade = new ArrayList<TextField>();
@@ -46,7 +46,7 @@ public class Grady extends Application {
 		
 		//populate ArrayLists
 		for(int i = 0; i < 7; i++){ tfClass.add(new TextField("Class " + i)); }
-		for(int i = 0; i < 7; i++){ tfCreditHours.add(new TextField("Credit Hours ")); }
+		for(int i = 0; i < 7; i++){ tfCreditHour.add(new TextField("Credit Hour ")); }
 		for(int i = 0; i < 7; i++){ tfCurrentGrade.add(new TextField("Current Grade")); }
 		for(int i = 0; i < 7; i++){ tfTargetGrade.add(new TextField("Target Grade")); }
 		for(int i = 0; i < 7; i++){ tfRemainingGrade.add(new TextField("Remaining Grade")); }
@@ -54,7 +54,7 @@ public class Grady extends Application {
 		
 		//add TextFields to gPane
 		for(int i = 0; i < 7; i++){ gPane.add(tfClass.get(i), 1, 1+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfCreditHours.get(i), 2, 1+i); }
+		for(int i = 0; i < 7; i++){ gPane.add(tfCreditHour.get(i), 2, 1+i); }
 		for(int i = 0; i < 7; i++){ gPane.add(tfCurrentGrade.get(i), 3, 1+i); }
 		for(int i = 0; i < 7; i++){ gPane.add(tfTargetGrade.get(i), 4, 1+i); }
 		for(int i = 0; i < 7; i++){ gPane.add(tfRemainingGrade.get(i), 5, 1+i); }
@@ -76,29 +76,84 @@ public class Grady extends Application {
 	}
 
 	public static void main(String[] args) {
+		System.out.println("Grady (c) 2015 Corey Naas");
+		System.out.println("Debug data \\/");
 		launch(args);
 	} 
 	
 	//calculates GPA from "current grade" column
 	public void calculateCurrentGPA(){
 		
-		/* Needs to collect nummber from tfCurrentGrade TextField array, math them, and
-		output result to tfCurrentGPA  */
-		int classNum = Integer.parseInt(tfNumberOfClasses.getText()); 
+		int classNum = 0;
+		int[] creditHour = new int[7];
 		double[] currentGrade = new double[7];
+		double[] currentGradeCalc = new double[7];
+		double[] gradePoint = new double[7];
+		double totalGradePoints = 0;
 		double currentGPA = 0;
+		int totalHours = 0;
 		
+		//catched exception if no input in "# of classes" text field
+		try{
+			classNum = Integer.parseInt(tfNumberOfClasses.getText());
+		}catch(NumberFormatException nfe){
+				System.out.println("NumberOfClasses error");
+			}
+		
+		//Collects credit hours for each class from tfCreditHour
 		for(int i = 0; i < classNum; i++){
-			final String Grade = tfCurrentGrade.get(i).getText();
-			currentGrade[i] = Double.parseDouble(Grade);
+			try{
+				final String Hour = tfCreditHour.get(i).getText();
+				creditHour[i] = Integer.parseInt(Hour);
+			}catch(NumberFormatException nfe){
+				System.out.println("CreditHour error");
+			}
+		}
+			
+		//collects grades from tfCurrentGrade
+		for(int i = 0; i < classNum; i++){
+			try{
+				final String Grade = tfCurrentGrade.get(i).getText();
+				currentGrade[i] = Double.parseDouble(Grade);
+			}catch(NumberFormatException nfe){
+				System.out.println("CurrentGrade error");
+			}
 		}
 		
-		
+		//Adds total credit hours
 		for(int i = 0; i < classNum; i++){
-			currentGPA = currentGPA + currentGrade[i];
+			totalHours = totalHours + creditHour[i];
+		}
+		
+		//convert percentage grades to non-decimal double between 1 and 4
+		for(int i = 0; i < classNum; i++){
+			if(currentGrade[i] < 100 && currentGrade[i] >= 90){ currentGradeCalc[i] = 4.0; }
+			else if(currentGrade[i] < 90 && currentGrade[i] >= 80){ currentGradeCalc[i] = 3.0; }
+			else if(currentGrade[i] < 80 && currentGrade[i] >= 70){ currentGradeCalc[i] = 2.0; }
+			else if(currentGrade[i] < 70 && currentGrade[i] >= 60){ currentGradeCalc[i] = 1.0; }
+		}
+		
+		//multiply credit hours by grades to get grade points
+		for(int i = 0; i < classNum; i++){
+			gradePoint[i] = creditHour[i] * currentGradeCalc[i];
+		}
+		
+		//adds total grade points
+		for(int i = 0; i < classNum; i++){
+			totalGradePoints = totalGradePoints + gradePoint[i];
+		}
+		
+		//divide total grade points by total credit hours
+		for(int i = 0; i < classNum; i++){
+			currentGPA = totalGradePoints / totalHours;
 		}
 		
 		//outputs result of math 
 		tfCurrentGPA.setText(Double.toString(currentGPA));
+		
+		//debugging output to console
+		System.out.println("Total Credit Hours: " + totalHours);
+		System.out.println("Total Grade Points: " + totalGradePoints);
+		System.out.println("--------");
 	}
 }
