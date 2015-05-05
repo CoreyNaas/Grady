@@ -17,15 +17,15 @@ import javafx.stage.Stage;
  
 public class Grady extends Application {
 	//declare globton of textfields lol
-	ArrayList<TextField> tfClass = new ArrayList<TextField>();
-	ArrayList<TextField> tfCreditHour = new ArrayList<TextField>();
-	ArrayList<TextField> tfCurrentGrade = new ArrayList<TextField>();
-	ArrayList<TextField> tfTargetGrade = new ArrayList<TextField>();
-	ArrayList<TextField> tfRemainingGrade = new ArrayList<TextField>();
-	ArrayList<TextField> tfGradeNeeded = new ArrayList<TextField>();
-	TextField tfTargetGPA = new TextField("Optional");
-	TextField tfNumberOfClasses = new TextField("Required");
-	TextField tfCurrentGPA = new TextField();
+	static ArrayList<TextField> tfClass = new ArrayList<TextField>();
+	static ArrayList<TextField> tfCreditHour = new ArrayList<TextField>();
+	static ArrayList<TextField> tfCurrentGrade = new ArrayList<TextField>();
+	static ArrayList<TextField> tfTargetGrade = new ArrayList<TextField>();
+	static ArrayList<TextField> tfRemainingGrade = new ArrayList<TextField>();
+	static ArrayList<TextField> tfGradeNeeded = new ArrayList<TextField>();
+	static TextField tfTargetGPA = new TextField("Optional");
+	static TextField tfNumberOfClasses = new TextField("Required");
+	static TextField tfCurrentGPA = new TextField();
 	Button btDoThings = new Button("Calculate");
 	
 	public void start(Stage priStage){	
@@ -85,7 +85,7 @@ public class Grady extends Application {
 		
 		
 		//process events
-		btDoThings.setOnAction( e -> calculateCurrentGPA());
+		btDoThings.setOnAction( e -> Calculate.calculateCurrentGPA());
 		
 		//creates priScene and sets in stage priStage
 		Scene priScene = new Scene(gPane, 600, 325);
@@ -99,9 +99,14 @@ public class Grady extends Application {
 		System.out.println("Debug data \\/");
 		launch(args);
 	} 
-	
-	//calculates GPA from "current grade" column
-	public void calculateCurrentGPA(){
+}
+
+
+
+
+
+class Calculate {
+	public static void calculateCurrentGPA(){
 		
 		int classNum = 0;
 		int[] creditHour = new int[7];
@@ -114,7 +119,7 @@ public class Grady extends Application {
 		
 		//catched exception if no input in "# of classes" text field
 		try{
-			classNum = Integer.parseInt(tfNumberOfClasses.getText());
+			classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
 		}catch(NumberFormatException nfe){
 				System.out.println("NumberOfClasses error");
 			}
@@ -122,7 +127,7 @@ public class Grady extends Application {
 		//Collects credit hours for each class from tfCreditHour
 		for(int i = 0; i < classNum; i++){
 			try{
-				final String Hour = tfCreditHour.get(i).getText();
+				final String Hour = Grady.tfCreditHour.get(i).getText();
 				creditHour[i] = Integer.parseInt(Hour);
 			}catch(NumberFormatException nfe){
 				System.out.println("CreditHour error");
@@ -132,7 +137,7 @@ public class Grady extends Application {
 		//collects grades from tfCurrentGrade
 		for(int i = 0; i < classNum; i++){
 			try{
-				final String Grade = tfCurrentGrade.get(i).getText();
+				final String Grade = Grady.tfCurrentGrade.get(i).getText();
 				currentGrade[i] = Double.parseDouble(Grade);
 			}catch(NumberFormatException nfe){
 				System.out.println("CurrentGrade error");
@@ -168,7 +173,7 @@ public class Grady extends Application {
 		}
 		
 		//outputs result of math 
-		tfCurrentGPA.setText(Double.toString(currentGPA));
+		Grady.tfCurrentGPA.setText(Double.toString(currentGPA));
 		
 		//debugging output to console
 		System.out.println("Total Credit Hours: " + totalHours);
