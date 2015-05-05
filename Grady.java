@@ -3,7 +3,8 @@
  * Copyright 2015 (C) Corey Naas
  * Created: 2015-05-02
  ------*/
- 
+
+import java.io.*;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -27,8 +28,10 @@ public class Grady extends Application {
 	static TextField tfTargetGPA = new TextField("Optional");
 	static TextField tfNumberOfClasses = new TextField("Required");
 	static TextField tfCurrentGPA = new TextField();
-	Button btCalculateGPA= new Button("Calculate");
+	Button btCalculateGPA = new Button("Calculate");
 	Button btCalculateNeeded = new Button("Calculate");
+	Button btSaveGrades = new Button("Save");
+	Button btLoadGrades = new Button("Load");
 	
 	public void start(Stage priStage){	
 		//Create grid-based UI
@@ -45,6 +48,8 @@ public class Grady extends Application {
 		gPane.add(tfCurrentGPA, 3, 9);
 		gPane.add(btCalculateGPA, 3, 10);
 		gPane.add(btCalculateNeeded, 6, 9);
+		gPane.add(btSaveGrades, 4, 10);
+		gPane.add(btLoadGrades, 5, 10);
 		
 		//add Column titles to gPane
 		gPane.add(new Label("Class Name"), 1, 1);
@@ -90,6 +95,8 @@ public class Grady extends Application {
 		//process events
 		btCalculateGPA.setOnAction( e -> Calculate.calculateCurrentGPA());
 		btCalculateNeeded.setOnAction( e -> Calculate.calculateGradeNeeded());
+		btSaveGrades.setOnAction( e -> GradeFile.saveGrades());
+		btLoadGrades.setOnAction( e -> GradeFile.loadGrades());
 		
 		//creates priScene and sets in stage priStage
 		Scene priScene = new Scene(gPane, 600, 325);
@@ -232,3 +239,41 @@ class Calculate {
 		
 	}
 }
+
+class GradeFile{
+	public static void saveGrades(){
+		
+		try{
+			ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("grades.grdy", false));
+			output.writeObject(Grady.tfClass);
+			System.out.println("Grades saved to file");
+			output.close();
+		}catch (FileNotFoundException ex) {
+			System.out.println("fileex");
+			System.out.println(ex.getMessage());
+		}catch (IOException ex) {
+			System.out.println("ioex");
+			System.out.println(ex.getMessage());
+		}
+
+	}
+	
+	public static void loadGrades(){
+	
+		try{
+			ObjectInputStream input = new ObjectInputStream(new FileInputStream("grades.grdy"));
+			Grady.tfClass = (ArrayList) input.readObject();
+			System.out.println(Grady.tfClass.get(1));
+			System.out.println("grades read from file");
+			input.close();
+		}catch (ClassNotFoundException ex) {
+			System.out.println("fileex");
+			System.out.println(ex.getMessage());
+		}catch (IOException ex) {
+			System.out.println("ioex");
+			System.out.println(ex.getMessage());
+		}
+	}
+	
+}
+
