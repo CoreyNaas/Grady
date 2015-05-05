@@ -16,6 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
  
 public class Grady extends Application {
+	static int classNum = 0;
 	//declare globton of textfields lol
 	static ArrayList<TextField> tfClass = new ArrayList<TextField>();
 	static ArrayList<TextField> tfCreditHour = new ArrayList<TextField>();
@@ -26,7 +27,8 @@ public class Grady extends Application {
 	static TextField tfTargetGPA = new TextField("Optional");
 	static TextField tfNumberOfClasses = new TextField("Required");
 	static TextField tfCurrentGPA = new TextField();
-	Button btDoThings = new Button("Calculate");
+	Button btCalculateGPA= new Button("Calculate");
+	Button btCalculateNeeded = new Button("Calculate");
 	
 	public void start(Stage priStage){	
 		//Create grid-based UI
@@ -41,7 +43,8 @@ public class Grady extends Application {
 		gPane.add(tfNumberOfClasses, 5, 0);
 		gPane.add(new Label("Current GPA:"), 2, 9);
 		gPane.add(tfCurrentGPA, 3, 9);
-		gPane.add(btDoThings, 3, 10);
+		gPane.add(btCalculateGPA, 3, 10);
+		gPane.add(btCalculateNeeded, 6, 9);
 		
 		//add Column titles to gPane
 		gPane.add(new Label("Class Name"), 1, 1);
@@ -85,7 +88,8 @@ public class Grady extends Application {
 		
 		
 		//process events
-		btDoThings.setOnAction( e -> Calculate.calculateCurrentGPA());
+		btCalculateGPA.setOnAction( e -> Calculate.calculateCurrentGPA());
+		btCalculateNeeded.setOnAction( e -> Calculate.calculateGradeNeeded());
 		
 		//creates priScene and sets in stage priStage
 		Scene priScene = new Scene(gPane, 600, 325);
@@ -101,14 +105,9 @@ public class Grady extends Application {
 	} 
 }
 
-
-
-
-
 class Calculate {
 	public static void calculateCurrentGPA(){
 		
-		int classNum = 0;
 		int[] creditHour = new int[7];
 		double[] currentGrade = new double[7];
 		double[] currentGradeCalc = new double[7];
@@ -119,38 +118,38 @@ class Calculate {
 		
 		//catched exception if no input in "# of classes" text field
 		try{
-			classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
+			Grady.classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
 		}catch(NumberFormatException nfe){
-				System.out.println("NumberOfClasses error");
+				System.out.println("NumberOfClasses error: add number of classes");
 			}
 		
 		//Collects credit hours for each class from tfCreditHour
-		for(int i = 0; i < classNum; i++){
+		for(int i = 0; i < Grady.classNum; i++){
 			try{
 				final String Hour = Grady.tfCreditHour.get(i).getText();
 				creditHour[i] = Integer.parseInt(Hour);
 			}catch(NumberFormatException nfe){
-				System.out.println("CreditHour error");
+				System.out.println("CreditHour error: credit hour entry(s) missing");
 			}
 		}
 			
 		//collects grades from tfCurrentGrade
-		for(int i = 0; i < classNum; i++){
+		for(int i = 0; i < Grady.classNum; i++){
 			try{
 				final String Grade = Grady.tfCurrentGrade.get(i).getText();
 				currentGrade[i] = Double.parseDouble(Grade);
 			}catch(NumberFormatException nfe){
-				System.out.println("CurrentGrade error");
+				System.out.println("CurrentGrade error: current grade entry(s) missing");
 			}
 		}
 		
 		//Adds total credit hours
-		for(int i = 0; i < classNum; i++){
+		for(int i = 0; i < Grady.classNum; i++){
 			totalHours = totalHours + creditHour[i];
 		}
 		
 		//convert percentage grades to non-decimal double between 1 and 4
-		for(int i = 0; i < classNum; i++){
+		for(int i = 0; i < Grady.classNum; i++){
 			if(currentGrade[i] < 100 && currentGrade[i] >= 90){ currentGradeCalc[i] = 4.0; }
 			else if(currentGrade[i] < 90 && currentGrade[i] >= 80){ currentGradeCalc[i] = 3.0; }
 			else if(currentGrade[i] < 80 && currentGrade[i] >= 70){ currentGradeCalc[i] = 2.0; }
@@ -158,17 +157,17 @@ class Calculate {
 		}
 		
 		//multiply credit hours by grades to get grade points
-		for(int i = 0; i < classNum; i++){
+		for(int i = 0; i < Grady.classNum; i++){
 			gradePoint[i] = creditHour[i] * currentGradeCalc[i];
 		}
 		
 		//adds total grade points
-		for(int i = 0; i < classNum; i++){
+		for(int i = 0; i < Grady.classNum; i++){
 			totalGradePoints = totalGradePoints + gradePoint[i];
 		}
 		
 		//divide total grade points by total credit hours
-		for(int i = 0; i < classNum; i++){
+		for(int i = 0; i < Grady.classNum; i++){
 			currentGPA = totalGradePoints / totalHours;
 		}
 		
@@ -179,5 +178,57 @@ class Calculate {
 		System.out.println("Total Credit Hours: " + totalHours);
 		System.out.println("Total Grade Points: " + totalGradePoints);
 		System.out.println("--------");
+	}
+	
+	public static void calculateGradeNeeded(){
+	
+		double[] currentGrade = new double[7];
+		double[] targetGrade = new double[7];
+		double[] remainingGrade = new double[7];
+		
+		//catched exception if no input in "# of classes" text field
+		try{
+			Grady.classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
+		}catch(NumberFormatException nfe){
+				System.out.println("NumberOfClasses error: add number of classes");
+			}
+		
+		//collects grades from tfCurrentGrade
+		for(int i = 0; i < Grady.classNum; i++){
+			try{
+				final String Grade = Grady.tfCurrentGrade.get(i).getText();
+				currentGrade[i] = Double.parseDouble(Grade);
+			}catch(NumberFormatException nfe){
+				System.out.println("CurrentGrade error: current grade entry(s) missing");
+			}
+		}
+		
+		//collects target grade from tfTargetGrade
+		for(int i = 0; i < Grady.classNum; i++){
+			try{
+				final String Grade = Grady.tfTargetGrade.get(i).getText();
+				targetGrade[i] = Double.parseDouble(Grade);
+			}catch(NumberFormatException nfe){
+				System.out.println("targetGrade error: target grade entry(s) missing");
+			}
+		}
+		
+		//collects remaining grade from tfRemainingGrade
+		for(int i = 0; i < Grady.classNum; i++){
+			try{
+				final String Grade = Grady.tfRemainingGrade.get(i).getText();
+				remainingGrade[i] = Double.parseDouble(Grade);
+			}catch(NumberFormatException nfe){
+				System.out.println("remainingGrade error: remaining grade entry(s) missing");
+			}
+		}
+		
+		//calculates average grade needed on remaining assignments to get target overall grade
+		for(int i = 0; i < Grady.classNum; i++){
+			double gradeNeeded = targetGrade[i]*100.0;
+			gradeNeeded = (currentGrade[i] * remainingGrade[i] +100 * (targetGrade[i] - currentGrade[i]))/ remainingGrade[i];
+			Grady.tfGradeNeeded.get(i).setText(Double.toString(gradeNeeded));
+		}
+		
 	}
 }
