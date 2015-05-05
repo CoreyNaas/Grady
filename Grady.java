@@ -6,6 +6,7 @@
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.geometry.Pos;
@@ -242,37 +243,55 @@ class Calculate {
 
 class GradeFile{
 	public static void saveGrades(){
+	
+		try{
+			Grady.classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
+		}catch(NumberFormatException nfe){
+				System.out.println("NumberOfClasses error: add number of classes");
+			}
+	
+		File file = new File("grades.txt");
 		
 		try{
-			ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("grades.grdy", false));
-			output.writeObject(Grady.tfClass);
-			System.out.println("Grades saved to file");
+			PrintWriter output = new PrintWriter(file);
+			for(int i = 0; i < Grady.classNum; i++){
+				output.print(Grady.tfClass.get(i).getText() + " ");
+				output.print(Grady.tfCreditHour.get(i).getText() + " ");
+				output.print(Grady.tfCurrentGrade.get(i).getText() + " ");
+				output.print(Grady.tfTargetGrade.get(i).getText() + " ");
+				output.print(Grady.tfRemainingGrade.get(i).getText() + " ");
+				output.println();
+			}
 			output.close();
-		}catch (FileNotFoundException ex) {
-			System.out.println("fileex");
-			System.out.println(ex.getMessage());
-		}catch (IOException ex) {
-			System.out.println("ioex");
-			System.out.println(ex.getMessage());
+		}catch(FileNotFoundException ex){
+			System.out.println("Write: File not found");
 		}
-
 	}
 	
 	public static void loadGrades(){
 	
 		try{
-			ObjectInputStream input = new ObjectInputStream(new FileInputStream("grades.grdy"));
-			Grady.tfClass = (ArrayList) input.readObject();
-			System.out.println(Grady.tfClass.get(1));
-			System.out.println("grades read from file");
+			Grady.classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
+		}catch(NumberFormatException nfe){
+				System.out.println("NumberOfClasses error: add number of classes");
+			}
+			
+		File file = new File("grades.txt");
+		
+		try{
+			Scanner input = new Scanner(file);
+			for(int i = 0; i < Grady.classNum; i++){
+				Grady.tfClass.get(i).setText(input.next());
+				Grady.tfCreditHour.get(i).setText(input.next());
+				Grady.tfCurrentGrade.get(i).setText(input.next());
+				Grady.tfTargetGrade.get(i).setText(input.next());
+				Grady.tfRemainingGrade.get(i).setText(input.next());
+			}
 			input.close();
-		}catch (ClassNotFoundException ex) {
-			System.out.println("fileex");
-			System.out.println(ex.getMessage());
-		}catch (IOException ex) {
-			System.out.println("ioex");
-			System.out.println(ex.getMessage());
+		}catch(FileNotFoundException ex){
+			System.out.println("Read: File not found");
 		}
+		
 	}
 	
 }
