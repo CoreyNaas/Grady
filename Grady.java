@@ -14,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
  
 public class Grady extends Application {
 	//declare globton of textfields lol
@@ -40,36 +39,56 @@ public class Grady extends Application {
 		gPane.add(tfTargetGPA, 2, 0);
 		gPane.add(new Label("# of Classes"), 4, 0);
 		gPane.add(tfNumberOfClasses, 5, 0);
-		gPane.add(new Label("Current GPA:"), 2, 8);
-		gPane.add(tfCurrentGPA, 3, 8);
-		gPane.add(btDoThings, 3, 9);
+		gPane.add(new Label("Current GPA:"), 2, 9);
+		gPane.add(tfCurrentGPA, 3, 9);
+		gPane.add(btDoThings, 3, 10);
+		
+		//add Column titles to gPane
+		gPane.add(new Label("Class Name"), 1, 1);
+		gPane.add(new Label("Credit Hours"), 2, 1);
+		gPane.add(new Label("Current Grade"), 3, 1);
+		gPane.add(new Label("Target Grade"), 4, 1);
+		gPane.add(new Label("Remaining Grade"), 5, 1);
+		gPane.add(new Label("Grade Needed"), 6, 1);
 		
 		//populate ArrayLists
-		for(int i = 0; i < 7; i++){ tfClass.add(new TextField("Class " + i)); }
-		for(int i = 0; i < 7; i++){ tfCreditHour.add(new TextField("Credit Hour ")); }
-		for(int i = 0; i < 7; i++){ tfCurrentGrade.add(new TextField("Current Grade")); }
-		for(int i = 0; i < 7; i++){ tfTargetGrade.add(new TextField("Target Grade")); }
-		for(int i = 0; i < 7; i++){ tfRemainingGrade.add(new TextField("Remaining Grade")); }
-		for(int i = 0; i < 7; i++){ tfGradeNeeded.add(new TextField("Grade Needed")); }
+		for(int i = 0; i < 7; i++){ tfClass.add(new TextField()); }
+		for(int i = 0; i < 7; i++){ tfCreditHour.add(new TextField()); }
+		for(int i = 0; i < 7; i++){ tfCurrentGrade.add(new TextField()); }
+		for(int i = 0; i < 7; i++){ tfTargetGrade.add(new TextField()); }
+		for(int i = 0; i < 7; i++){ tfRemainingGrade.add(new TextField()); }
+		for(int i = 0; i < 7; i++){ tfGradeNeeded.add(new TextField()); }
 		
 		//add TextFields to gPane
-		for(int i = 0; i < 7; i++){ gPane.add(tfClass.get(i), 1, 1+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfCreditHour.get(i), 2, 1+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfCurrentGrade.get(i), 3, 1+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfTargetGrade.get(i), 4, 1+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfRemainingGrade.get(i), 5, 1+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfGradeNeeded.get(i), 6, 1+i); }
+		for(int i = 0; i < 7; i++){ gPane.add(tfClass.get(i), 1, 2+i); }
+		for(int i = 0; i < 7; i++){ gPane.add(tfCreditHour.get(i), 2, 2+i); }
+		for(int i = 0; i < 7; i++){ gPane.add(tfCurrentGrade.get(i), 3, 2+i); }
+		for(int i = 0; i < 7; i++){ gPane.add(tfTargetGrade.get(i), 4, 2+i); }
+		for(int i = 0; i < 7; i++){ gPane.add(tfRemainingGrade.get(i), 5, 2+i); }
+		for(int i = 0; i < 7; i++){ gPane.add(tfGradeNeeded.get(i), 6, 2+i); }
 		
 		//set UI Properties
 		gPane.setAlignment(Pos.CENTER);
 		for(int i = 0; i < 7; i++){ tfGradeNeeded.get(i).setEditable(false); }
 		tfCurrentGPA.setEditable(false);
 		
+		//set TextField widths
+		tfTargetGPA.setPrefWidth(25);
+		tfNumberOfClasses.setPrefWidth(50);
+		tfCurrentGPA.setPrefWidth(50);
+		for(int i = 0; i < 7; i++){ tfClass.get(i).setPrefWidth(150); }
+		for(int i = 0; i < 7; i++){ tfCreditHour.get(i).setPrefWidth(25); }
+		for(int i = 0; i < 7; i++){ tfCurrentGrade.get(i).setPrefWidth(25); }
+		for(int i = 0; i < 7; i++){ tfTargetGrade.get(i).setPrefWidth(25); }
+		for(int i = 0; i < 7; i++){ tfRemainingGrade.get(i).setPrefWidth(25); }
+		for(int i = 0; i < 7; i++){ tfGradeNeeded.get(i).setPrefWidth(50); }
+		
+		
 		//process events
 		btDoThings.setOnAction( e -> calculateCurrentGPA());
 		
 		//creates priScene and sets in stage priStage
-		Scene priScene = new Scene(gPane, 780, 300);
+		Scene priScene = new Scene(gPane, 600, 325);
 		priStage.setTitle("Grady - Grade Calculator");
 		priStage.setScene(priScene);
 		priStage.show();
