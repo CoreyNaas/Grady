@@ -14,6 +14,7 @@ import javafx.geometry.HPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
  
@@ -33,6 +34,7 @@ public class Grady extends Application {
 	Button btCalculateNeeded = new Button("Calculate");
 	Button btSaveGrades = new Button("Save");
 	Button btLoadGrades = new Button("Load");
+	static CheckBox chkSave = new CheckBox("Save");
 	
 	public void start(Stage priStage){	
 		//Create grid-based UI
@@ -51,6 +53,7 @@ public class Grady extends Application {
 		gPane.add(btCalculateNeeded, 6, 9);
 		gPane.add(btSaveGrades, 4, 10);
 		gPane.add(btLoadGrades, 5, 10);
+		gPane.add(chkSave, 4, 9);
 		
 		//add Column titles to gPane
 		gPane.add(new Label("Class Name"), 1, 1);
@@ -243,43 +246,56 @@ class Calculate {
 
 class GradeFile{
 	public static void saveGrades(){
-	
-		try{
-			Grady.classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
-		}catch(NumberFormatException nfe){
-				System.out.println("NumberOfClasses error: add number of classes");
-			}
-	
-		File file = new File("grades.txt");
+		if (Grady.chkSave.isSelected() == true){
 		
-		try{
-			PrintWriter output = new PrintWriter(file);
-			for(int i = 0; i < Grady.classNum; i++){
-				output.print(Grady.tfClass.get(i).getText() + " ");
-				output.print(Grady.tfCreditHour.get(i).getText() + " ");
-				output.print(Grady.tfCurrentGrade.get(i).getText() + " ");
-				output.print(Grady.tfTargetGrade.get(i).getText() + " ");
-				output.print(Grady.tfRemainingGrade.get(i).getText() + " ");
-				output.println();
+			//catched exception if no input in "# of classes" text field
+			try{
+				Grady.classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
+			}catch(NumberFormatException nfe){
+					System.out.println("NumberOfClasses error: add number of classes");
+				}
+			
+			//create File object for grades.txt
+			File file = new File("grades.txt");
+			
+			//write grade data to grades.txt
+			try{
+				PrintWriter output = new PrintWriter(file);
+				output.println(Grady.tfNumberOfClasses.getText() + " ");
+				for(int i = 0; i < Grady.classNum; i++){
+					output.print(Grady.tfClass.get(i).getText() + " ");
+					output.print(Grady.tfCreditHour.get(i).getText() + " ");
+					output.print(Grady.tfCurrentGrade.get(i).getText() + " ");
+					output.print(Grady.tfTargetGrade.get(i).getText() + " ");
+					output.print(Grady.tfRemainingGrade.get(i).getText() + " ");
+					output.println();
+				}
+				output.close();
+				Grady.chkSave.setSelected(false);
+			}catch(FileNotFoundException ex){
+				System.out.println("Write: File not found");
+				System.out.println(ex.getMessage());
 			}
-			output.close();
-		}catch(FileNotFoundException ex){
-			System.out.println("Write: File not found");
 		}
 	}
 	
 	public static void loadGrades(){
-	
+		
+		//catched exception if no input in "# of classes" text field
 		try{
 			Grady.classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
 		}catch(NumberFormatException nfe){
 				System.out.println("NumberOfClasses error: add number of classes");
 			}
-			
+		
+		//create File object for grades.txt
 		File file = new File("grades.txt");
 		
+		//read grade data from grades.txt
 		try{
 			Scanner input = new Scanner(file);
+			Grady.classNum = Integer.parseInt(input.next());
+			Grady.tfNumberOfClasses.setText(Integer.toString(Grady.classNum));
 			for(int i = 0; i < Grady.classNum; i++){
 				Grady.tfClass.get(i).setText(input.next());
 				Grady.tfCreditHour.get(i).setText(input.next());
@@ -290,6 +306,7 @@ class GradeFile{
 			input.close();
 		}catch(FileNotFoundException ex){
 			System.out.println("Read: File not found");
+			System.out.println(ex.getMessage());
 		}
 		
 	}
