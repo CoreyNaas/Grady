@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javax.swing.JOptionPane;
  
 public class Grady extends Application {
 	static int classNum = 0;
@@ -72,12 +73,14 @@ public class Grady extends Application {
 		for(int i = 0; i < 7; i++){ tfGradeNeeded.add(new TextField()); }
 		
 		//add TextFields to gPane
-		for(int i = 0; i < 7; i++){ gPane.add(tfClass.get(i), 1, 2+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfCreditHour.get(i), 2, 2+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfCurrentGrade.get(i), 3, 2+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfTargetGrade.get(i), 4, 2+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfRemainingGrade.get(i), 5, 2+i); }
-		for(int i = 0; i < 7; i++){ gPane.add(tfGradeNeeded.get(i), 6, 2+i); }
+		for(int i = 0; i < 7; i++){
+			gPane.add(tfClass.get(i), 1, 2+i);
+			gPane.add(tfCreditHour.get(i), 2, 2+i);
+			gPane.add(tfCurrentGrade.get(i), 3, 2+i);
+			gPane.add(tfTargetGrade.get(i), 4, 2+i);
+			gPane.add(tfRemainingGrade.get(i), 5, 2+i);
+			gPane.add(tfGradeNeeded.get(i), 6, 2+i);
+		}
 		
 		//set UI Properties
 		gPane.setAlignment(Pos.CENTER);
@@ -85,7 +88,7 @@ public class Grady extends Application {
 		tfCurrentGPA.setEditable(false);
 		
 		//set TextField widths
-		tfTargetGPA.setPrefWidth(25);
+		tfTargetGPA.setPrefWidth(50);
 		tfNumberOfClasses.setPrefWidth(50);
 		tfCurrentGPA.setPrefWidth(50);
 		for(int i = 0; i < 7; i++){ tfClass.get(i).setPrefWidth(150); }
@@ -131,8 +134,9 @@ class Calculate {
 		try{
 			Grady.classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
 		}catch(NumberFormatException nfe){
-				System.out.println("NumberOfClasses error: add number of classes");
-			}
+			System.out.println("NumberOfClasses error: add number of classes");
+			JOptionPane.showMessageDialog(null, "Add number of classes");
+		}
 		
 		//Collects credit hours for each class from tfCreditHour
 		for(int i = 0; i < Grady.classNum; i++){
@@ -141,6 +145,7 @@ class Calculate {
 				creditHour[i] = Integer.parseInt(Hour);
 			}catch(NumberFormatException nfe){
 				System.out.println("CreditHour error: credit hour entry(s) missing");
+				JOptionPane.showMessageDialog(null, "Credit hour entry(s) missing");
 			}
 		}
 			
@@ -151,6 +156,7 @@ class Calculate {
 				currentGrade[i] = Double.parseDouble(Grade);
 			}catch(NumberFormatException nfe){
 				System.out.println("CurrentGrade error: current grade entry(s) missing");
+				JOptionPane.showMessageDialog(null, "Current grade entry(s) missing");
 			}
 		}
 		
@@ -202,6 +208,7 @@ class Calculate {
 			Grady.classNum = Integer.parseInt(Grady.tfNumberOfClasses.getText());
 		}catch(NumberFormatException nfe){
 				System.out.println("NumberOfClasses error: add number of classes");
+				JOptionPane.showMessageDialog(null, "Add number of classes");
 			}
 		
 		//collects grades from tfCurrentGrade
@@ -211,6 +218,7 @@ class Calculate {
 				currentGrade[i] = Double.parseDouble(Grade);
 			}catch(NumberFormatException nfe){
 				System.out.println("CurrentGrade error: current grade entry(s) missing");
+				JOptionPane.showMessageDialog(null, "Current grade entry(s) missing");
 			}
 		}
 		
@@ -221,6 +229,7 @@ class Calculate {
 				targetGrade[i] = Double.parseDouble(Grade);
 			}catch(NumberFormatException nfe){
 				System.out.println("targetGrade error: target grade entry(s) missing");
+				JOptionPane.showMessageDialog(null, "Target grade entry(s) missing");
 			}
 		}
 		
@@ -231,6 +240,7 @@ class Calculate {
 				remainingGrade[i] = Double.parseDouble(Grade);
 			}catch(NumberFormatException nfe){
 				System.out.println("remainingGrade error: remaining grade entry(s) missing");
+				JOptionPane.showMessageDialog(null, "Remaining grade entry(s) missing");
 			}
 		}
 		
@@ -275,6 +285,7 @@ class GradeFile{
 			}catch(FileNotFoundException ex){
 				System.out.println("Write: File not found");
 				System.out.println(ex.getMessage());
+				JOptionPane.showMessageDialog(null, "Write: File not found");
 			}
 		}
 	}
@@ -307,8 +318,11 @@ class GradeFile{
 		}catch(FileNotFoundException ex){
 			System.out.println("Read: File not found");
 			System.out.println(ex.getMessage());
+			JOptionPane.showMessageDialog(null, "Read: File not found");
 		}
 		
+		for(int i = 0; i < 7; i++){ Grady.tfGradeNeeded.get(i).setText(""); }
+		Grady.tfCurrentGPA.setText("");
 	}
 	
 }
